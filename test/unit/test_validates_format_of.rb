@@ -32,7 +32,7 @@ Expectations do
   end
   
   expect true do
-    options = [:message, :if, :times, :level, :groups, :with, :key]
+    options = [:message, :if, :unless, :times, :level, :groups, :with, :key]
     Validatable::ValidatesFormatOf.new(stub_everything, :test, options.to_blank_options_hash).must_understand(options.to_blank_options_hash)
   end
   

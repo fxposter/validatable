@@ -267,39 +267,41 @@ functional_tests do
     instance.errors.on(:namen)
   end
 
-  expect "can't be empty" do
-    child_class = Class.new do
-      include Validatable
-      attr_accessor :name, :address
-      validates_presence_of :name
-    end
-    klass = Class.new do
-      include Validatable
-      include_errors_from :child, :if => lambda { true }
-      define_method :child do
-        child_class.new
+  [[:if, true], [:unless, false]].each do |option, value|
+    expect "can't be empty" do
+      child_class = Class.new do
+        include Validatable
+        attr_accessor :name, :address
+        validates_presence_of :name
       end
+      klass = Class.new do
+        include Validatable
+        include_errors_from :child, option => lambda { value }
+        define_method :child do
+          child_class.new
+        end
+      end
+      instance = klass.new
+      instance.valid?
+      instance.errors.on(:name)
     end
-    instance = klass.new
-    instance.valid?
-    instance.errors.on(:name)
-  end
 
-  expect true do
-    child_class = Class.new do
-      include Validatable
-      attr_accessor :name, :address
-      validates_presence_of :name
-    end
-    klass = Class.new do
-      include Validatable
-      include_errors_from :child, :if => lambda { false }
-      define_method :child do
-        child_class.new
+    expect value do
+      child_class = Class.new do
+        include Validatable
+        attr_accessor :name, :address
+        validates_presence_of :name
       end
+      klass = Class.new do
+        include Validatable
+        include_errors_from :child, option => lambda { !value }
+        define_method :child do
+          child_class.new
+        end
+      end
+      instance = klass.new
+      instance.valid?
     end
-    instance = klass.new
-    instance.valid?
   end
   
   test ':if with symbol should work' do
@@ -334,6 +336,42 @@ functional_tests do
     instance.name_required = false
     assert instance.valid?
     instance.name_required = true
+    assert !instance.valid?
+    assert_equal "can't be empty", instance.errors.on(:name)
+  end
+
+  test ':unless with symbol should work' do
+    klass = Class.new do
+      include Validatable
+      attr_accessor :name, :use_email_instead_of_name
+      validates_presence_of :name, :unless => :use_email_instead_of_name?
+      
+      def use_email_instead_of_name?
+        use_email_instead_of_name
+      end
+    end
+    instance = klass.new
+    instance.use_email_instead_of_name = true
+    assert instance.valid?
+    instance.use_email_instead_of_name = false
+    assert !instance.valid?
+    assert_equal "can't be empty", instance.errors.on(:name)
+  end
+  
+  test ':unless with string should work' do
+    klass = Class.new do
+      include Validatable
+      attr_accessor :name, :use_email_instead_of_name
+      validates_presence_of :name, :unless => "use_email_instead_of_name?"
+      
+      def use_email_instead_of_name?
+        use_email_instead_of_name
+      end
+    end
+    instance = klass.new
+    instance.use_email_instead_of_name = true
+    assert instance.valid?
+    instance.use_email_instead_of_name = false
     assert !instance.valid?
     assert_equal "can't be empty", instance.errors.on(:name)
   end

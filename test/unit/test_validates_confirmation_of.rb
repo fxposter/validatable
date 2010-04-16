@@ -69,7 +69,7 @@ Expectations do
   end
   
   expect true do
-    options = { :message => nil, :if => nil, :times => nil, :level => nil, :groups => nil, :case_sensitive => nil }
+    options = { :message => nil, :if => nil, :unless => nil, :times => nil, :level => nil, :groups => nil, :case_sensitive => nil }
     Validatable::ValidatesConfirmationOf.new(stub_everything, :test).must_understand(options)
   end
   

@@ -69,7 +69,7 @@ Expectations do
   end
   
   expect true do
-    options = [:message, :if, :times, :level, :groups, :only_integer]
+    options = [:message, :if, :unless, :times, :level, :groups, :only_integer]
     Validatable::ValidatesNumericalityOf.new(stub_everything, :test).must_understand(options.to_blank_options_hash)
   end
   

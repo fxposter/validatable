@@ -17,7 +17,7 @@ Expectations do
   end
   
   expect true do
-    options = [:message, :if, :times, :level, :groups, :logic, :key]
+    options = [:message, :if, :unless, :times, :level, :groups, :logic, :key]
     Validatable::ValidatesTrueFor.new(stub_everything, :name, options.to_blank_options_hash).must_understand(options.to_blank_options_hash)
   end
   
